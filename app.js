@@ -14,7 +14,7 @@ console.log('Connected to Database');
   console.log('Connection Failed');
 });
 
-app.use("/", express.static(path.join(__dirname, "build")))
+app.use("", express.static(path.join(__dirname, "build")))
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use((req, res, next) => {
@@ -30,7 +30,7 @@ app.use((req, res, next) => {
     next();
   });
 
-  app.use("/api/",routes);
+  app.use("/",routes);
   app.get(function(req, res) {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
   });
