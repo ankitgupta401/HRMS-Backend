@@ -14,7 +14,8 @@ console.log('Connected to Database');
   console.log('Connection Failed');
 });
 
-app.use("", express.static(path.join(__dirname, "build")))
+app.use("/", express.static(path.join(__dirname, "build")))
+console.log(__dirname);
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 app.use((req, res, next) => {

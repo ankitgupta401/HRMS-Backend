@@ -15,12 +15,13 @@ const MIME_TYPE_MAP = {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log(file)
     const isValid = MIME_TYPE_MAP[file.mimetype];
     let error = new Error('Invalid MIme Type')
     if(isValid) {
       error = null;
     }
-    cb(error, "backend/images");
+    cb(error, "images");
   },
   filename: (req, file, cb) => {
     const name = file.originalname.toLowerCase().split(' ').join('-');
@@ -121,6 +122,7 @@ Leave.find({leaveFrom: {"$gte":req.body.from, "$lte": req.body.to }, deleted:fal
 
 var cpUpload = multer({storage: storage}).fields([{ name: 'doc1', maxCount: 1 }, { name: 'doc2', maxCount: 1 }]);
 router.post("/addEmployee", cpUpload, (req,res,next) => {
+  console.log(req.files.doc1[0]);
   url = req.protocol + "://" + req.get("host");
   //console.log(req.body);
   const emp = new Employee({
