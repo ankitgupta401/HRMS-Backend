@@ -1,3 +1,4 @@
+
 const express =require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -9,8 +10,12 @@ const MIME_TYPE_MAP = {
   'image/jpg' : 'jpg',
   'image/PNG': 'png',
   'image/JPEG': 'jpg',
-  'image/JPG' : 'jpg'
+  'image/JPG' : 'jpg',
+  'application/pdf': 'pdf',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx'
 };
+
+
 
 
 const storage = multer.diskStorage({
@@ -31,9 +36,20 @@ const storage = multer.diskStorage({
 });
 
 
+var cpUpload = multer({storage: storage}).fields([{ name: 'file', maxCount: 1 }]);
+router.post("/upload",cpUpload, (req,res,next)=> {
+  let url = req.protocol + "://" + req.get("host");
+  res.status(200).json({
+    code:0,
+    result:  url + "/images/" + req.files.file[0].filename,
+    message: "uploaded"
+  })
+
+})
+
 router.post("/listEmployee", (req,res,next) => {
 Employee.find({deleted: false}).sort({_id:-1}).then((result) => {
-  res.status(201).json({
+  res.status(200).json({
     code: 0,
     result: result,
     message: "Employee Found",
@@ -120,15 +136,11 @@ Leave.find({leaveFrom: {"$gte":req.body.from, "$lte": req.body.to }, deleted:fal
 });
 
 
-var cpUpload = multer({storage: storage}).fields([{ name: 'doc1', maxCount: 1 }, { name: 'doc2', maxCount: 1 }]);
-router.post("/addEmployee", cpUpload, (req,res,next) => {
-  console.log(req.files.doc1[0]);
-  url = req.protocol + "://" + req.get("host");
-  //console.log(req.body);
+
+router.post("/addEmployee", (req,res,next) => {
+//console.log(req);
   const emp = new Employee({
   ...req.body,
-    doc1: url + "/images/" + req.files.doc1[0].filename,
-    doc2: url + "/images/" + req.files.doc2[0].filename,
     leaveRemaining: 36,
     deleted: false
   });
@@ -203,4 +215,4 @@ router.post("/update", (req,res,next) => {
 });
 
 
-module.exports = router;
+module.exports = router
